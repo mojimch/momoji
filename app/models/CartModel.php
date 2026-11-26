@@ -26,6 +26,14 @@ class CartModel extends Model
         $cart = $this->getOrCreateCart($userId);
         $quantity = max(1, $quantity);
 
+        $productStatement = $this->db->prepare(
+            'SELECT 1 FROM products WHERE id = :id AND is_active = 1'
+        );
+        $productStatement->execute(['id' => $productId]);
+        if (!$productStatement->fetchColumn()) {
+            return false;
+        }
+
         $stockStatement = $this->db->prepare(
             $variantId
                 ? 'SELECT stock FROM product_variants WHERE id = :id AND product_id = :product_id'

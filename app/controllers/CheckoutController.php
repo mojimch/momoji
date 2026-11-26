@@ -98,7 +98,11 @@ class CheckoutController extends Controller
                 'notes' => (string) ($_POST['notes'] ?? ''),
             ]);
             flash('success', 'Pesanan berhasil dibuat.');
-            $this->redirect('/checkout/complete/' . rawurlencode($result['invoice']));
+            $this->redirect(
+                $paymentMethod === 'QRIS'
+                    ? '/orders/payment/' . rawurlencode($result['invoice'])
+                    : '/orders/detail/' . rawurlencode($result['invoice'])
+            );
         } catch (RuntimeException $exception) {
             flash('error', $exception->getMessage());
             $this->redirect('/checkout');

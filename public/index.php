@@ -23,6 +23,10 @@ require dirname(__DIR__) . '/app/models/CheckoutModel.php';
 require dirname(__DIR__) . '/app/controllers/CartController.php';
 require dirname(__DIR__) . '/app/controllers/ProfileController.php';
 require dirname(__DIR__) . '/app/controllers/CheckoutController.php';
+require dirname(__DIR__) . '/app/models/OrderModel.php';
+require dirname(__DIR__) . '/app/models/NotificationModel.php';
+require dirname(__DIR__) . '/app/controllers/OrderController.php';
+require dirname(__DIR__) . '/app/controllers/NotificationController.php';
 
 $app = new App();
 
@@ -77,12 +81,31 @@ $app->post('/admin/settings/zones/delete/{id}', [CheckoutController::class, 'zon
 $app->get('/admin/vouchers', [CheckoutController::class, 'vouchers']);
 $app->post('/admin/vouchers', [CheckoutController::class, 'voucherSave']);
 $app->post('/admin/vouchers/delete/{id}', [CheckoutController::class, 'voucherDelete']);
+$app->get('/orders', [OrderController::class, 'index']);
+$app->get('/orders/detail/{invoice}', [OrderController::class, 'detail']);
+$app->get('/orders/payment/{invoice}', [OrderController::class, 'payment']);
+$app->post('/orders/payment/{invoice}', [OrderController::class, 'uploadProof']);
+$app->post('/orders/cancel', [OrderController::class, 'cancel']);
+$app->get('/admin/orders', [OrderController::class, 'adminIndex']);
+$app->get('/admin/orders/detail/{invoice}', [OrderController::class, 'adminDetail']);
+$app->post('/admin/orders/status', [OrderController::class, 'updateStatus']);
+$app->post('/admin/orders/payment/verify', [OrderController::class, 'verifyPayment']);
+$app->post('/admin/orders/payment/cod-paid', [OrderController::class, 'markCodPaid']);
+$app->post('/admin/orders/qris', [OrderController::class, 'saveQrisImage']);
+$app->get('/payment-proofs/{proofId}', [OrderController::class, 'proofImage']);
+$app->get('/store/qris', [OrderController::class, 'qrisImage']);
+$app->get('/notifications', [NotificationController::class, 'index']);
+$app->get('/notifications/open/{id}', [NotificationController::class, 'open']);
 
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 $uploadPrefix = '/storage/uploads/';
 $uploadPosition = strpos($requestPath, $uploadPrefix);
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET' && $uploadPosition !== false) {
     $relativePath = substr($requestPath, $uploadPosition + strlen($uploadPrefix));
+    if (!str_starts_with($relativePath, 'products/')) {
+        http_response_code(404);
+        exit;
+    }
     $file = realpath(UPLOAD_PATH . '/' . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $relativePath));
     $uploadRoot = realpath(UPLOAD_PATH);
     if ($file !== false && $uploadRoot !== false && str_starts_with($file, $uploadRoot . DIRECTORY_SEPARATOR)) {

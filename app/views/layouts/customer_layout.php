@@ -2,6 +2,7 @@
 $auth = AuthMiddleware::check();
 $flashSuccess = flash('success');
 $flashError = flash('error');
+$unreadCount = $auth ? (new NotificationModel())->unreadCount((int) $auth['id']) : 0;
 ?>
 <!doctype html>
 <html lang="id">
@@ -27,12 +28,13 @@ $flashError = flash('error');
                     <li class="nav-item"><a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/products">Katalog</a></li>
                     <?php if ($auth && $auth['role'] === 'customer'): ?>
                         <li class="nav-item"><a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/cart">Keranjang <span class="badge rounded-pill bg-danger cart-badge">0</span></a></li>
-                        <li class="nav-item"><a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/notifications">Notifikasi <span class="badge rounded-pill bg-danger notification-badge">0</span></a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/notifications">Notifikasi <span class="badge rounded-pill bg-danger notification-badge"><?= $unreadCount ?></span></a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><?= e($auth['name']) ?></a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="<?= e(rtrim(APP_URL, '/')) ?>/profile">Profil</a></li>
                                 <li><a class="dropdown-item" href="<?= e(rtrim(APP_URL, '/')) ?>/orders">Pesanan Saya</a></li>
+                                <li><a class="dropdown-item" href="<?= e(rtrim(APP_URL, '/')) ?>/notifications">Notifikasi (<?= $unreadCount ?>)</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form action="<?= e(rtrim(APP_URL, '/')) ?>/logout" method="post"><?= csrf_field() ?><button class="dropdown-item" type="submit">Logout</button></form>

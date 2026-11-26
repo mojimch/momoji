@@ -3,6 +3,7 @@ $auth = AuthMiddleware::check();
 $flashSuccess = flash('success');
 $flashError = flash('error');
 $isAuthenticatedAdmin = $auth && ($auth['role'] ?? '') === 'admin';
+$unreadCount = $auth ? (new NotificationModel())->unreadCount((int) $auth['id']) : 0;
 ?>
 <!doctype html>
 <html lang="id">
@@ -27,6 +28,7 @@ $isAuthenticatedAdmin = $auth && ($auth['role'] ?? '') === 'admin';
                 <a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/admin/stocks">Stok</a>
                 <a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/admin/settings/zones">Zona Pengiriman</a>
                 <a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/admin/vouchers">Voucher</a>
+                <a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/admin/orders">Pesanan & Verifikasi Pembayaran</a>
                 <span class="nav-link disabled opacity-50">Pesanan <small>(Tahap 5)</small></span>
                 <span class="nav-link disabled opacity-50">Verifikasi Pembayaran <small>(Tahap 5)</small></span>
                 <span class="nav-link disabled opacity-50">Pelanggan <small>(Tahap 6)</small></span>
@@ -41,7 +43,7 @@ $isAuthenticatedAdmin = $auth && ($auth['role'] ?? '') === 'admin';
                 <button class="btn btn-outline-secondary d-lg-none" type="button" data-admin-sidebar aria-label="Menu">Menu</button>
                 <span class="fw-semibold">Panel Administrasi</span>
                 <div class="d-flex align-items-center gap-3">
-                    <span class="text-secondary">Notifikasi <span class="badge bg-secondary">0</span></span>
+                    <a class="text-decoration-none" href="<?= e(rtrim(APP_URL, '/')) ?>/notifications">Notifikasi <span class="badge bg-danger"><?= $unreadCount ?></span></a>
                     <form action="<?= e(rtrim(APP_URL, '/')) ?>/logout" method="post"><?= csrf_field() ?><button class="btn btn-sm btn-outline-danger" type="submit">Logout</button></form>
                 </div>
             </header>

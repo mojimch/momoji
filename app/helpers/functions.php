@@ -94,6 +94,9 @@ function safe_upload(array $file, string $directory, array $allowed = ['image/jp
     if (!in_array($mime, $allowed, true)) {
         throw new RuntimeException('Tipe file tidak diizinkan.');
     }
+    if (@getimagesize($file['tmp_name']) === false) {
+        throw new RuntimeException('File bukan gambar yang valid.');
+    }
 
     $extensionMap = [
         'image/jpeg' => 'jpg',
