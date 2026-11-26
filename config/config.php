@@ -2,6 +2,10 @@
 
 define('APP_ENV', getenv('APP_ENV') ?: 'local');
 define('APP_URL', rtrim(getenv('APP_URL') ?: 'http://localhost/momoji', '/'));
+define('APP_BASE_PATH', (static function (): string {
+    $path = rtrim((string) parse_url(APP_URL, PHP_URL_PATH), '/');
+    return basename($path) === 'public' ? rtrim(dirname($path), '/') : $path;
+})());
 define('APP_NAME', getenv('APP_NAME') ?: 'Momoji');
 define('APP_DEBUG', filter_var(getenv('APP_DEBUG') ?: 'true', FILTER_VALIDATE_BOOLEAN));
 define('APP_PATH', dirname(__DIR__) . '/app');

@@ -18,10 +18,18 @@ class App
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-        $basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
-        $path = $basePath !== '' && str_starts_with($path, $basePath)
-            ? substr($path, strlen($basePath))
-            : $path;
+        $basePath = APP_BASE_PATH;
+        if ($basePath !== '' && ($path === $basePath || str_starts_with($path, $basePath . '/'))) {
+            $path = substr($path, strlen($basePath));
+        } else {
+            $scriptDirectory = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
+            if ($scriptDirectory !== '' && str_starts_with($path, $scriptDirectory . '/')) {
+                $path = substr($path, strlen($scriptDirectory));
+            }
+        }
+        if ($path === '/public' || str_starts_with($path, '/public/')) {
+            $path = substr($path, strlen('/public')) ?: '/';
+        }
         $path = $this->normalize($path);
 
         $handler = $this->routes[$method][$path] ?? null;

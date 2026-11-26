@@ -10,6 +10,11 @@ function format_rupiah(float|int|string $amount): string
     return 'Rp ' . number_format((float) $amount, 0, ',', '.');
 }
 
+function asset_url(string $path): string
+{
+    return rtrim(APP_URL, '/') . '/' . ltrim($path, '/');
+}
+
 function csrf_token(): string
 {
     if (empty($_SESSION['csrf_token'])) {
@@ -64,4 +69,48 @@ function with_old(array $values): void
 function clear_old(): void
 {
     unset($_SESSION['old']);
+}
+
+function slugify(string $value): string
+{
+    $value = trim(mb_strtolower($value, 'UTF-8'));
+    $value = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value) ?: $value;
+    $value = preg_replace('/[^a-z0-9]+/', '-', $value) ?? '';
+    return trim($value, '-') ?: 'item';
+}
+
+function safe_upload(array $file, string $directory, array $allowed = ['image/jpeg', 'image/png', 'image/webp']): string
+{
+    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+        throw new RuntimeException('Upload file gagal.');
+    }
+
+    if (($file['size'] ?? 0) > 5 * 1024 * 1024) {
+        throw new RuntimeException('Ukuran file maksimal 5 MB.');
+    }
+
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($file['tmp_name']);
+    if (!in_array($mime, $allowed, true)) {
+        throw new RuntimeException('Tipe file tidak diizinkan.');
+    }
+
+    $extensionMap = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+    ];
+    $extension = $extensionMap[$mime];
+    $targetDirectory = UPLOAD_PATH . '/' . trim($directory, '/');
+    if (!is_dir($targetDirectory) && !mkdir($targetDirectory, 0755, true)) {
+        throw new RuntimeException('Folder upload tidak dapat dibuat.');
+    }
+
+    $filename = bin2hex(random_bytes(16)) . '.' . $extension;
+    $target = $targetDirectory . '/' . $filename;
+    if (!move_uploaded_file($file['tmp_name'], $target)) {
+        throw new RuntimeException('File tidak dapat disimpan.');
+    }
+
+    return '/storage/uploads/' . trim($directory, '/') . '/' . $filename;
 }

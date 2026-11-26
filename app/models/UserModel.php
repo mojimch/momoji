@@ -54,6 +54,18 @@ class UserModel extends Model
         return (int) $this->db->lastInsertId();
     }
 
+    public function updateProfile(int $id, string $name, string $phone): void
+    {
+        $statement = $this->db->prepare(
+            'UPDATE users SET name = :name, phone = :phone WHERE id = :id'
+        );
+        $statement->execute([
+            'name' => trim($name),
+            'phone' => trim($phone),
+            'id' => $id,
+        ]);
+    }
+
     public function createPasswordReset(int $userId): string
     {
         $token = bin2hex(random_bytes(32));

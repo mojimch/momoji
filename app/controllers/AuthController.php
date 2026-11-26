@@ -202,4 +202,10 @@ class AuthController extends Controller
             'auth' => AuthMiddleware::check(),
         ], 'admin_layout');
     }
+
+    public function adminHome(): void
+    {
+        AuthMiddleware::requireAdmin();
+        $this->redirect('/admin/dashboard');
+    }
 }
