@@ -31,6 +31,37 @@
                             <div class="small text-secondary"><?= format_rupiah($item['unit_price']) ?> × <?= (int) $item['quantity'] ?></div>
                         </div>
                         <strong><?= format_rupiah($item['subtotal']) ?></strong>
+                        <?php if ($order['status'] === 'Selesai' && $item['product_id'] !== null): ?>
+                            <div class="border-top mt-3 pt-3 w-100">
+                                <?php if ($item['review_status'] === 'pending'): ?>
+                                    <span class="badge text-bg-warning">Ulasan menunggu moderasi</span>
+                                <?php elseif ($item['review_status'] === 'approved'): ?>
+                                    <span class="badge text-bg-success">Ulasan diterbitkan · <?= (int) $item['review_rating'] ?>/5</span>
+                                <?php else: ?>
+                                    <?php if ($item['review_status'] === 'rejected'): ?>
+                                        <div class="alert alert-warning py-2">Ulasan sebelumnya ditolak. Silakan perbaiki dan kirim ulang.</div>
+                                    <?php endif; ?>
+                                    <form method="post" action="<?= e(rtrim(APP_URL, '/')) ?>/reviews" class="row g-2">
+                                        <?= csrf_field() ?>
+                                        <input type="hidden" name="invoice" value="<?= e($order['invoice_number']) ?>">
+                                        <input type="hidden" name="order_item_id" value="<?= (int) $item['id'] ?>">
+                                        <div class="col-sm-3">
+                                            <label class="form-label" for="rating-<?= (int) $item['id'] ?>">Rating</label>
+                                            <select class="form-select" id="rating-<?= (int) $item['id'] ?>" name="rating" required>
+                                                <?php for ($rating = 5; $rating >= 1; $rating--): ?>
+                                                    <option value="<?= $rating ?>" <?= (int) ($item['review_rating'] ?? 5) === $rating ? 'selected' : '' ?>><?= $rating ?>/5</option>
+                                                <?php endfor; ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <label class="form-label" for="comment-<?= (int) $item['id'] ?>">Ulasan</label>
+                                            <textarea class="form-control" id="comment-<?= (int) $item['id'] ?>" name="comment" rows="2" maxlength="5000"><?= e($item['review_status'] === 'rejected' ? $item['review_comment'] : '') ?></textarea>
+                                        </div>
+                                        <div class="col-12"><button class="btn btn-sm btn-outline-primary" type="submit">Kirim ulasan</button></div>
+                                    </form>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>

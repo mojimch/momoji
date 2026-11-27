@@ -28,6 +28,7 @@ $unreadCount = $auth ? (new NotificationModel())->unreadCount((int) $auth['id'])
                     <li class="nav-item"><a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/products">Katalog</a></li>
                     <?php if ($auth && $auth['role'] === 'customer'): ?>
                         <li class="nav-item"><a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/cart">Keranjang <span class="badge rounded-pill bg-danger cart-badge">0</span></a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/wishlist">Wishlist</a></li>
                         <li class="nav-item"><a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/notifications">Notifikasi <span class="badge rounded-pill bg-danger notification-badge"><?= $unreadCount ?></span></a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><?= e($auth['name']) ?></a>

@@ -27,6 +27,13 @@ require dirname(__DIR__) . '/app/models/OrderModel.php';
 require dirname(__DIR__) . '/app/models/NotificationModel.php';
 require dirname(__DIR__) . '/app/controllers/OrderController.php';
 require dirname(__DIR__) . '/app/controllers/NotificationController.php';
+require dirname(__DIR__) . '/app/models/WishlistModel.php';
+require dirname(__DIR__) . '/app/models/ReviewModel.php';
+require dirname(__DIR__) . '/app/models/AdminModel.php';
+require dirname(__DIR__) . '/app/models/DatabaseBackupModel.php';
+require dirname(__DIR__) . '/app/controllers/WishlistController.php';
+require dirname(__DIR__) . '/app/controllers/ReviewController.php';
+require dirname(__DIR__) . '/app/controllers/AdminController.php';
 
 $app = new App();
 
@@ -43,7 +50,7 @@ $app->post('/forgot-password', [AuthController::class, 'forgotPasswordPost']);
 $app->get('/reset-password/{token}', [AuthController::class, 'resetPassword']);
 $app->post('/reset-password/{token}', [AuthController::class, 'resetPasswordPost']);
 $app->get('/admin', [AuthController::class, 'adminHome']);
-$app->get('/admin/dashboard', [AuthController::class, 'dashboard']);
+$app->get('/admin/dashboard', [AdminController::class, 'dashboard']);
 $app->get('/products', [CatalogController::class, 'index']);
 $app->get('/products/detail/{slug}', [CatalogController::class, 'detail']);
 
@@ -96,6 +103,21 @@ $app->get('/payment-proofs/{proofId}', [OrderController::class, 'proofImage']);
 $app->get('/store/qris', [OrderController::class, 'qrisImage']);
 $app->get('/notifications', [NotificationController::class, 'index']);
 $app->get('/notifications/open/{id}', [NotificationController::class, 'open']);
+$app->get('/wishlist', [WishlistController::class, 'index']);
+$app->post('/wishlist/add', [WishlistController::class, 'add']);
+$app->post('/wishlist/remove', [WishlistController::class, 'remove']);
+$app->post('/wishlist/move', [WishlistController::class, 'moveToCart']);
+$app->post('/reviews', [ReviewController::class, 'submit']);
+$app->get('/admin/reviews', [ReviewController::class, 'adminIndex']);
+$app->post('/admin/reviews/{id}/status', [ReviewController::class, 'updateStatus']);
+$app->get('/admin/customers', [AdminController::class, 'customers']);
+$app->get('/admin/reports', [AdminController::class, 'reports']);
+$app->get('/admin/settings', [AdminController::class, 'settings']);
+$app->post('/admin/settings', [AdminController::class, 'saveSettings']);
+$app->get('/admin/password', [AdminController::class, 'password']);
+$app->post('/admin/password', [AdminController::class, 'changePassword']);
+$app->get('/admin/backup', [AdminController::class, 'backup']);
+$app->post('/admin/backup', [AdminController::class, 'downloadBackup']);
 
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 $uploadPrefix = '/storage/uploads/';

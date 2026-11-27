@@ -51,10 +51,21 @@ class CatalogController extends Controller
             require APP_PATH . '/views/layouts/error.php';
             return;
         }
+        $auth = AuthMiddleware::check();
+        $isCustomer = $auth && ($auth['role'] ?? '') === 'customer';
+        $wishlist = new WishlistModel();
+        $reviews = new ReviewModel();
         $this->view('customer/products/detail', [
             'product' => $product,
             'images' => $this->catalog->images((int) $product['id']),
             'variants' => $this->catalog->variants((int) $product['id']),
+            'auth' => $auth,
+            'isCustomer' => $isCustomer,
+            'isWishlisted' => $isCustomer
+                ? $wishlist->contains((int) $auth['id'], (int) $product['id'])
+                : false,
+            'reviews' => $reviews->approvedForProduct((int) $product['id']),
+            'reviewSummary' => $reviews->summaryForProduct((int) $product['id']),
         ], 'customer_layout');
     }
 }

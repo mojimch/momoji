@@ -29,13 +29,12 @@ $unreadCount = $auth ? (new NotificationModel())->unreadCount((int) $auth['id'])
                 <a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/admin/settings/zones">Zona Pengiriman</a>
                 <a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/admin/vouchers">Voucher</a>
                 <a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/admin/orders">Pesanan & Verifikasi Pembayaran</a>
-                <span class="nav-link disabled opacity-50">Pesanan <small>(Tahap 5)</small></span>
-                <span class="nav-link disabled opacity-50">Verifikasi Pembayaran <small>(Tahap 5)</small></span>
-                <span class="nav-link disabled opacity-50">Pelanggan <small>(Tahap 6)</small></span>
-                <span class="nav-link disabled opacity-50">Ulasan <small>(Tahap 7)</small></span>
-                <span class="nav-link disabled opacity-50">Laporan <small>(Tahap 6)</small></span>
-                <span class="nav-link disabled opacity-50">Pengaturan Toko <small>(Tahap 6)</small></span>
-                <span class="nav-link disabled opacity-50">Backup DB <small>(Tahap 7)</small></span>
+                <a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/admin/customers">Pelanggan</a>
+                <a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/admin/reviews">Ulasan</a>
+                <a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/admin/reports">Laporan</a>
+                <a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/admin/settings">Pengaturan Toko</a>
+                <a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/admin/backup">Backup Database</a>
+                <a class="nav-link" href="<?= e(rtrim(APP_URL, '/')) ?>/admin/password">Ganti Password</a>
             </nav>
         </aside>
         <div class="admin-main">

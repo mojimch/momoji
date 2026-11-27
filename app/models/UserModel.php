@@ -66,6 +66,32 @@ class UserModel extends Model
         ]);
     }
 
+    public function changeAdminPassword(int $id, string $currentPassword, string $newPassword): bool
+    {
+        $find = $this->db->prepare(
+            'SELECT password FROM users
+             WHERE id = :id AND role = :role AND status = :status
+             LIMIT 1'
+        );
+        $find->execute(['id' => $id, 'role' => 'admin', 'status' => 'active']);
+        $passwordHash = $find->fetchColumn();
+        if (!is_string($passwordHash) || !password_verify($currentPassword, $passwordHash)) {
+            return false;
+        }
+
+        $update = $this->db->prepare(
+            'UPDATE users SET password = :password
+             WHERE id = :id AND role = :role AND status = :status'
+        );
+        $update->execute([
+            'password' => password_hash($newPassword, PASSWORD_BCRYPT),
+            'id' => $id,
+            'role' => 'admin',
+            'status' => 'active',
+        ]);
+        return $update->rowCount() === 1;
+    }
+
     public function createPasswordReset(int $userId): string
     {
         $token = bin2hex(random_bytes(32));

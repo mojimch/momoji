@@ -97,11 +97,14 @@ class OrderModel extends Model
     {
         $statement = $this->db->prepare(
             'SELECT oi.*, p.slug,
+                    r.id AS review_id, r.rating AS review_rating,
+                    r.comment AS review_comment, r.status AS review_status,
                     (SELECT pi.image_path FROM product_images pi
                      WHERE pi.product_id = oi.product_id
                      ORDER BY pi.is_primary DESC, pi.id ASC LIMIT 1) AS image_path
              FROM order_items oi
              LEFT JOIN products p ON p.id = oi.product_id
+             LEFT JOIN reviews r ON r.order_item_id = oi.id
              WHERE oi.order_id = :order_id
              ORDER BY oi.id'
         );

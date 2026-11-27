@@ -23,11 +23,19 @@ final class AuthMiddleware
             redirect('/admin/login');
         }
 
-        if (($_SESSION['auth']['role'] ?? '') !== 'admin') {
+        $statement = Database::connection()->prepare(
+            'SELECT role, status FROM users WHERE id = :id LIMIT 1'
+        );
+        $statement->execute(['id' => (int) $_SESSION['auth']['id']]);
+        $account = $statement->fetch();
+        if (!$account || $account['role'] !== 'admin' || $account['status'] !== 'active') {
+            unset($_SESSION['auth']);
             http_response_code(403);
             echo '<h1>403 - Akses ditolak</h1>';
             exit;
         }
+
+        $_SESSION['auth']['role'] = $account['role'];
     }
 
     public static function check(): ?array

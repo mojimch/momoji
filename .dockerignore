@@ -1,0 +1,14 @@
+.git
+.git/**
+.env
+.env.*
+!.env.example
+node_modules
+vendor
+storage/uploads/**
+!storage/uploads/.gitkeep
+*.log
+*.tmp
+*.bak
+Thumbs.db
+desktop.ini
