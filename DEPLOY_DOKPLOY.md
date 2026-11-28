@@ -1,6 +1,6 @@
 # Panduan Deployment Momoji ke Dokploy
 
-Panduan ini menggunakan Dockerfile di root repository dan MySQL 8.0 yang dikelola Dokploy. Jangan mengunggah file `.env` atau kredensial database ke Git.
+Panduan ini menggunakan Dockerfile di root repository dan MySQL 8.0 yang dikelola Dokploy. Jangan mengunggah file `.env` atau kredensial database ke Git. Docker/Dokploy adalah pilihan opsional; untuk XAMPP lokal atau shared hosting PHP, gunakan [panduan lokal dan shared hosting](./DEPLOY_LOKAL_HOSTING.md).
 
 ## 1. Persiapan repository
 

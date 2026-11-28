@@ -118,6 +118,12 @@ class AuthController extends Controller
 
     public function logout(): void
     {
+        if (!csrf_validate($_POST['_csrf'] ?? null)) {
+            http_response_code(419);
+            flash('error', 'Sesi formulir tidak valid. Muat ulang halaman sebelum logout.');
+            $this->redirect('/login');
+        }
+
         $_SESSION = [];
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();

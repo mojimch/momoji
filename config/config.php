@@ -7,7 +7,14 @@ define('APP_BASE_PATH', (static function (): string {
     return basename($path) === 'public' ? rtrim(dirname($path), '/') : $path;
 })());
 define('APP_NAME', getenv('APP_NAME') ?: 'Momoji');
-define('APP_DEBUG', filter_var(getenv('APP_DEBUG') ?: 'true', FILTER_VALIDATE_BOOLEAN));
+$debugSetting = getenv('APP_DEBUG');
+if ($debugSetting === false || $debugSetting === '') {
+    $debugSetting = APP_ENV === 'production' ? 'false' : 'true';
+}
+define(
+    'APP_DEBUG',
+    filter_var($debugSetting, FILTER_VALIDATE_BOOLEAN)
+);
 define('APP_PATH', dirname(__DIR__) . '/app');
 define('PUBLIC_PATH', dirname(__DIR__) . '/public');
 define('STORAGE_PATH', dirname(__DIR__) . '/storage');

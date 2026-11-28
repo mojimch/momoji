@@ -9,11 +9,21 @@ final class AuthMiddleware
             redirect('/login');
         }
 
-        if (($_SESSION['auth']['role'] ?? '') !== 'customer') {
+        $statement = Database::connection()->prepare(
+            'SELECT name, email, role, status FROM users WHERE id = :id LIMIT 1'
+        );
+        $statement->execute(['id' => (int) $_SESSION['auth']['id']]);
+        $account = $statement->fetch();
+        if (!$account || $account['role'] !== 'customer' || $account['status'] !== 'active') {
+            unset($_SESSION['auth']);
             http_response_code(403);
             echo '<h1>403 - Akses ditolak</h1>';
             exit;
         }
+
+        $_SESSION['auth']['name'] = $account['name'];
+        $_SESSION['auth']['email'] = $account['email'];
+        $_SESSION['auth']['role'] = $account['role'];
     }
 
     public static function requireAdmin(): void
@@ -24,7 +34,7 @@ final class AuthMiddleware
         }
 
         $statement = Database::connection()->prepare(
-            'SELECT role, status FROM users WHERE id = :id LIMIT 1'
+            'SELECT name, email, role, status FROM users WHERE id = :id LIMIT 1'
         );
         $statement->execute(['id' => (int) $_SESSION['auth']['id']]);
         $account = $statement->fetch();
@@ -35,6 +45,8 @@ final class AuthMiddleware
             exit;
         }
 
+        $_SESSION['auth']['name'] = $account['name'];
+        $_SESSION['auth']['email'] = $account['email'];
         $_SESSION['auth']['role'] = $account['role'];
     }
 
